@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace PlatformGame
 {
@@ -14,8 +16,19 @@ namespace PlatformGame
         private bool _isTurnedLeft = false;
         private bool _isBlinking = false;
         private bool _canJump = true;
+
+        private void Start()
+        {
+            
+        
+        }
+
         private void Update()
         {
+            
+            
+            
+            
             float horizontalInput = Input.GetAxisRaw("Horizontal");
             _animator.SetFloat("Speed",Mathf.Abs(horizontalInput));
             if((horizontalInput < 0 && !_isTurnedLeft) || (horizontalInput > 0 && _isTurnedLeft))
