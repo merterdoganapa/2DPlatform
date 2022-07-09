@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,10 +5,10 @@ using UnityEngine.Android;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class Deneme : MonoBehaviour
+public class StepController : MonoBehaviour
 {
     private StepCounter _stepCounter;
-    public Text deneme;
+    public Text stepCount;
 
     private void Start()
     {
@@ -29,7 +28,7 @@ public class Deneme : MonoBehaviour
         if (_stepCounter.enabled)
         {
             var currentSteps = _stepCounter.stepCounter.ReadValue();
-            deneme.text = currentSteps.ToString();
+            stepCount.text = currentSteps.ToString();
         }
     }
 }
