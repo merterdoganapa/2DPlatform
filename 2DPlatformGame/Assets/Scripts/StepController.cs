@@ -5,30 +5,33 @@ using UnityEngine.Android;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class StepController : MonoBehaviour
+namespace PlatformGame
 {
-    private StepCounter _stepCounter;
-    public Text stepCount;
-
-    private void Start()
+    public class StepController : MonoBehaviour
     {
-        _stepCounter = StepCounter.current;
+        private StepCounter _stepCounter;
+        public Text stepCount;
 
-        if (!Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
+        private void Start()
         {
-            Permission.RequestUserPermission("android.permission.ACTIVITY_RECOGNITION");
-        }
+            _stepCounter = StepCounter.current;
+
+            if (!Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
+            {
+                Permission.RequestUserPermission("android.permission.ACTIVITY_RECOGNITION");
+            }
         
-        InputSystem.EnableDevice(_stepCounter);
-    }
+            InputSystem.EnableDevice(_stepCounter);
+        }
 
 
-    private void Update()
-    {
-        if (_stepCounter.enabled)
+        private void Update()
         {
-            var currentSteps = _stepCounter.stepCounter.ReadValue();
-            stepCount.text = currentSteps.ToString();
+            if (_stepCounter.enabled)
+            {
+                var currentSteps = _stepCounter.stepCounter.ReadValue();
+                stepCount.text = currentSteps.ToString();
+            }
         }
     }
 }
