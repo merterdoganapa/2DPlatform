@@ -10,26 +10,17 @@ namespace PlatformGame
     public class PlayerMovementController : MonoBehaviour
     {
         [SerializeField] private float _movementSpeed;
+        [SerializeField] private VariableJoystick _variableJoystick;
         [SerializeField] private Rigidbody2D _rb;
         [SerializeField] private Animator _animator;
         [SerializeField] private float jumpForce;
         private bool _isTurnedLeft = false;
         private bool _isBlinking = false;
         private bool _canJump = true;
-
-        private void Start()
-        {
-            
         
-        }
-
         private void Update()
         {
-            
-            
-            
-            
-            float horizontalInput = Input.GetAxisRaw("Horizontal");
+            float horizontalInput = _variableJoystick.Horizontal;
             _animator.SetFloat("Speed",Mathf.Abs(horizontalInput));
             if((horizontalInput < 0 && !_isTurnedLeft) || (horizontalInput > 0 && _isTurnedLeft))
                 Flip();
@@ -60,7 +51,7 @@ namespace PlatformGame
             _isTurnedLeft = !_isTurnedLeft;
         }
 
-        private void Jump()
+        public void Jump()
         {
             if (!_canJump) return;
             _animator.SetBool("IsJumping",true);

@@ -16,7 +16,7 @@ namespace PlatformGame
         private bool findNextPoint = true;
         private Vector3 direction = Vector3.zero;
         private MovementDirection _movementDirection;
-        public UnityEvent xd;
+        public UnityEvent OnReached;
         
         private void Awake()
         {
@@ -56,12 +56,12 @@ namespace PlatformGame
             if (currentPointIndex + 1 == _movementPoints.Length)
             {
                 _movementDirection = MovementDirection.Previous;
-                xd.Invoke();
+                OnReached.Invoke();
             }
             else if (currentPointIndex == 0)
             {
                 _movementDirection = MovementDirection.Next;
-                xd.Invoke();
+                OnReached.Invoke();
             }
     
             if (_movementDirection == MovementDirection.Next)
