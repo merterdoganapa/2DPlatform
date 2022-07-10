@@ -10,7 +10,6 @@ namespace PlatformGame
     public class PlayerMovementController : MonoBehaviour
     {
         [SerializeField] private float _movementSpeed;
-        [SerializeField] private VariableJoystick _variableJoystick;
         [SerializeField] private Rigidbody2D _rb;
         [SerializeField] private Animator _animator;
         [SerializeField] private float jumpForce;
@@ -20,17 +19,37 @@ namespace PlatformGame
         
         private void Update()
         {
-            float horizontalInput = _variableJoystick.Horizontal;
-            _animator.SetFloat("Speed",Mathf.Abs(horizontalInput));
-            if((horizontalInput < 0 && !_isTurnedLeft) || (horizontalInput > 0 && _isTurnedLeft))
-                Flip();
-            transform.Translate(new Vector3(horizontalInput * _movementSpeed,0,0) * Time.deltaTime);
             if(Input.GetKeyDown(KeyCode.Space))
                 Jump();
             if (_isBlinking == false)
             {
                 StartCoroutine(Blink());
             }
+        }
+
+        public void MoveLeft()
+        {
+            transform.Translate(new Vector3(-1f * _movementSpeed,0,0) * Time.deltaTime);
+            if (!_isTurnedLeft)
+            {
+                Flip();
+            }
+            _animator.SetFloat("Speed",1);
+        }
+
+        public void MoveRight()
+        {
+            transform.Translate(new Vector3(_movementSpeed,0,0) * Time.deltaTime);
+            if (_isTurnedLeft)
+            {
+                Flip();
+            }
+            _animator.SetFloat("Speed",1);
+        }
+
+        public void Stop()
+        {
+            _animator.SetFloat("Speed",0);
         }
 
         private IEnumerator Blink()
@@ -67,6 +86,14 @@ namespace PlatformGame
                 if (!_canJump)
                     _canJump = true;
                 
+            }
+        }
+
+        private void OnCollisionExit2D(Collision2D col)
+        {
+            if (col.gameObject.CompareTag("Ground"))
+            {
+                _canJump = false;
             }
         }
     }
