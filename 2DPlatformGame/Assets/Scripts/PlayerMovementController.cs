@@ -9,55 +9,199 @@ namespace PlatformGame
 {
     public class PlayerMovementController : MonoBehaviour
     {
-        [SerializeField] private float _movementSpeed;
+        [Header("Horizontal Movement")] [SerializeField]
+        private float _movementSpeed;
+        private float horizontal = 0;
+        private bool _isFacingLeft = false;
+        
+        [Header("Vertical Movement")]
+        [SerializeField] private float jumpForce;
+        [SerializeField] private float jumpDelay = 0.25f;
+        private bool canJump = true;
+        
+        [Header("Physics")]
+        
+        [SerializeField] private float _maxSpeed = 7f;
+        [SerializeField] private float _linearDrag = 4f;
+        [SerializeField] private float gravity = 1;
+        [SerializeField] private float fallMultiplier = 5f;
+        
+
+        [Header("Components")] [SerializeField]
+        private BoxCollider2D _boxCollider;
         [SerializeField] private Rigidbody2D _rb;
         [SerializeField] private Animator _animator;
-        [SerializeField] private float jumpForce;
-        private bool _isTurnedLeft = false;
+
+        [SerializeField] private LayerMask _platformLayerMask;
         private bool _isBlinking = false;
-        private bool _canJump = true;
-        
+        private bool decrease = false;
+        [Header("Collision")] private bool onGround = true;
         private void Update()
         {
-            if(Input.GetKeyDown(KeyCode.Space))
-                Jump();
+            bool wasGround = onGround;
+            onGround = IsGrounded();
+            // if (!wasGround && onGround)
+            // {
+            //     StartCoroutine(JumpSqueeze(1, 0.8f, 0.05f));
+            // }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                StartCoroutine(TryJump());
+            }
             if (_isBlinking == false)
             {
                 StartCoroutine(Blink());
             }
+            if (decrease && horizontal != 0)
+            {
+                if (horizontal < 0)
+                {
+                    IncreaseHorizontal();  
+                }
+                else
+                {
+                    DecreaseHorizontal();
+                }
+            }
+
+            ModifyPhysics();
+        }
+
+        public void OnJumpButtonClick()
+        {
+            StartCoroutine(TryJump());
+        }
+        
+        private IEnumerator TryJump()
+        {
+            if (!canJump) yield break;
+            if (onGround)
+            {
+                canJump = false;
+                Jump();
+                yield return new WaitForSeconds(jumpDelay);
+                canJump = true;
+            }
+        }
+        
+        IEnumerator JumpSqueeze(float xSqueeze, float ySqueeze, float seconds) {
+            Vector3 originalSize = transform.localScale;
+            Vector3 newSize = new Vector3(xSqueeze, ySqueeze, originalSize.z);
+            float t = 0f;
+            while (t <= 1.0) {
+                t += Time.deltaTime / seconds;
+                transform.localScale = Vector3.Lerp(originalSize, newSize, t);
+                yield return null;
+            }
+            t = 0f;
+            while (t <= 1.0) {
+                t += Time.deltaTime / seconds;
+                transform.localScale = Vector3.Lerp(newSize, originalSize, t);
+                yield return null;
+            }
+
         }
 
         public void MoveLeft()
         {
-            transform.Translate(new Vector3(-1f * _movementSpeed,0,0) * Time.deltaTime);
-            if (!_isTurnedLeft)
+            decrease = false;
+            if (horizontal > 0)
+            {
+                horizontal = 0;
+            }
+
+            DecreaseHorizontal();
+            if (!_isFacingLeft)
             {
                 Flip();
             }
-            _animator.SetFloat("Speed",1);
+
+            MoveCharacter(-1);
         }
 
         public void MoveRight()
         {
-            transform.Translate(new Vector3(_movementSpeed,0,0) * Time.deltaTime);
-            if (_isTurnedLeft)
+            decrease = false;
+            if (horizontal < 0)
+            {
+                horizontal = 0;
+            }
+
+            IncreaseHorizontal();
+            if (_isFacingLeft)
             {
                 Flip();
             }
-            _animator.SetFloat("Speed",1);
+
+            MoveCharacter(1);
+        }
+
+        private void IncreaseHorizontal()
+        {
+            horizontal += Time.deltaTime * 5;
+            horizontal = Mathf.Min(horizontal, 1);
+        }
+
+        private void DecreaseHorizontal()
+        {
+            horizontal -= Time.deltaTime * 5;
+            horizontal = Mathf.Max(horizontal, -1);
+        }
+
+        private void MoveCharacter(float horizontal)
+        {
+            _rb.AddForce(Vector2.right * this.horizontal * _movementSpeed);
+            _animator.SetFloat("Speed", 1);
+
+            if (Mathf.Abs(_rb.velocity.x) > _maxSpeed)
+            {
+                _rb.velocity = new Vector2(Mathf.Sign(_rb.velocity.x) * _maxSpeed, _rb.velocity.y);
+            }
+        }
+
+        private void ModifyPhysics()
+        {
+            bool changingDirections = (horizontal > 0 && _rb.velocity.x < 0) || (horizontal < 0 && _rb.velocity.x > 0);
+            if (onGround)
+            {
+                if (Mathf.Abs(horizontal) < 0.4f || changingDirections)
+                {
+                    _rb.drag = _linearDrag;
+                }
+                else
+                {
+                    _rb.drag = 2;
+                }
+                _rb.gravityScale = 0;
+            }
+            else
+            {
+                _rb.gravityScale = gravity;
+                _rb.drag = _linearDrag * 0.15f;
+                if (_rb.velocity.y < 0)
+                {
+                    _rb.gravityScale = gravity * fallMultiplier;
+                }
+                else if (_rb.velocity.y > 0)
+                {
+                    _rb.gravityScale = gravity * (fallMultiplier / 2);
+                }
+            }
+            
         }
 
         public void Stop()
         {
-            _animator.SetFloat("Speed",0);
+            decrease = true;
+            _animator.SetFloat("Speed", 0);
         }
 
         private IEnumerator Blink()
         {
             _isBlinking = true;
-            _animator.SetBool("IsBlinking",true);
+            _animator.SetBool("IsBlinking", true);
             yield return new WaitForSeconds(.5f);
-            _animator.SetBool("IsBlinking",false);
+            _animator.SetBool("IsBlinking", false);
             yield return new WaitForSeconds(4f);
             _isBlinking = false;
         }
@@ -67,34 +211,43 @@ namespace PlatformGame
             var localScale = transform.localScale;
             localScale.x *= -1;
             transform.localScale = localScale;
-            _isTurnedLeft = !_isTurnedLeft;
+            _isFacingLeft = !_isFacingLeft;
         }
 
         public void Jump()
         {
-            if (!_canJump) return;
-            _animator.SetBool("IsJumping",true);
+            SetBoolJumpAnimation(true);
             _rb.AddForce(Vector3.up * jumpForce, ForceMode2D.Impulse);
-            _canJump = false;
         }
+
+        private void SetBoolJumpAnimation(bool value)
+        {
+            _animator.SetBool("IsJumping", value);
+        }
+
+        private bool IsGrounded()
+        {
+            RaycastHit2D raycastHit2D = Physics2D.BoxCast(_boxCollider.bounds.center, _boxCollider.bounds.size, 0f,
+                Vector2.down, 0.1f, _platformLayerMask);
+            return raycastHit2D.collider != null;
+        }
+
 
         private void OnCollisionEnter2D(Collision2D col)
         {
             if (col.gameObject.CompareTag("Ground"))
             {
-                _animator.SetBool("IsJumping",false);
-                if (!_canJump)
-                    _canJump = true;
-                
+                SetBoolJumpAnimation(false);
             }
         }
-
+        /*
         private void OnCollisionExit2D(Collision2D col)
         {
             if (col.gameObject.CompareTag("Ground"))
             {
                 _canJump = false;
+                Debug.Log("Exit");
             }
-        }
+        }*/
     }
 }
