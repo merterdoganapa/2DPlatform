@@ -7,6 +7,6 @@ public class GameController : MonoBehaviour
 {
     public void OnPauseButtonClick()
     {
-        
+        SceneManager.LoadScene(0);
     }
 }

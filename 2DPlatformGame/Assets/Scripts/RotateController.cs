@@ -1,32 +1,33 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class RotateController : MonoBehaviour
 {
     [SerializeField] private Transform _spriteTransform;
     [SerializeField] private float _rotationSpeed;
-    [SerializeField] private Vector3 _rotationDirection;
-    [SerializeField] private bool loop = true;
+    [SerializeField] private bool angleLimits = true;
     [SerializeField] private float maxRotValue;
-
+    private float timer = 0;
+    
     private void Update()
     {
-        if(!loop)
+        if (!angleLimits)
         {
-            var absRotValue = Mathf.Abs(maxRotValue);
-            if (_spriteTransform.rotation.z < absRotValue * -1 || _spriteTransform.rotation.z > absRotValue)
-            {
-                InverseRotationDirection();
-            }
+            _spriteTransform.Rotate(-Vector3.forward * _rotationSpeed);
         }
-        _spriteTransform.Rotate(_rotationDirection * _rotationSpeed);
+        else
+        {
+            float angle = Mathf.Sin(timer) * maxRotValue;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            timer += Time.deltaTime;
+        }
     }
 
-    public void InverseRotationDirection()
+    public void InverseRotation()
     {
-        Vector3 tmp = _rotationDirection;
-        tmp.z *= -1;
-        _rotationDirection = tmp;
+        _rotationSpeed *= -1;
     }
 }

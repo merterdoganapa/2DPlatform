@@ -197,7 +197,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2274070014752143055}
         m_TargetAssemblyTypeName: RotateController, Assembly-CSharp
-        m_MethodName: InverseRotationDirection
+        m_MethodName: InverseRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -221,8 +221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteTransform: {fileID: 2274070013808683670}
   _rotationSpeed: 1
-  _rotationDirection: {x: 0, y: 0, z: 1}
-  loop: 0
+  angleLimits: 1
   maxRotValue: 25
 --- !u!114 &2274070014752143054
 MonoBehaviour:
