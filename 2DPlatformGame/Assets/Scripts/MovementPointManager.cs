@@ -16,6 +16,7 @@ namespace PlatformGame
         {
             if (Application.isPlaying) return;
             Transform movementPointParent = transform.Find("MovementPointParent");
+            if (movementPointParent == null) return;
             for (int i = 0 ; i < movementPointParent.childCount ; ++i)
             {
                 var child = movementPointParent.GetChild(i);

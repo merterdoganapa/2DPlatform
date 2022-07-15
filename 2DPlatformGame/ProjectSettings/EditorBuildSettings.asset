@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/MainMenu.unity
+    guid: 3195c70d4d8b1414987dd5dd5ee859ea
+  - enabled: 1
+    path: Assets/Scenes/PlatformGame.unity
     guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 0
-    path: Assets/Pedometer/Example/StepCounter.unity
-    guid: e5fcab55ab6a24d8eb5dd6198b597019
   m_configObjects: {}

@@ -20,6 +20,7 @@ namespace PlatformGame
         
         private void Awake()
         {
+            if (_movementPointsParent == null) return;
             _movementDirection = MovementDirection.Next;
             var childCount = _movementPointsParent.childCount;
             _movementPoints = new Vector3[childCount];
@@ -34,6 +35,7 @@ namespace PlatformGame
     
         private void FixedUpdate()
         {
+            if (_movementPoints == null || _movementPoints.Length == 0) return; 
             if (findNextPoint)
             {
                 direction = (_movementPoints[currentPointIndex] - transform.position).normalized;

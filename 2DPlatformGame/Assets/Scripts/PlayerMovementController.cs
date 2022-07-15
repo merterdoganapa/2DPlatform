@@ -164,13 +164,13 @@ namespace PlatformGame
             bool changingDirections = (horizontal > 0 && _rb.velocity.x < 0) || (horizontal < 0 && _rb.velocity.x > 0);
             if (onGround)
             {
-                if (Mathf.Abs(horizontal) < 0.4f || changingDirections)
+                if (Mathf.Abs(horizontal) < 0.8f || changingDirections)
                 {
                     _rb.drag = _linearDrag;
                 }
                 else
                 {
-                    _rb.drag = 2;
+                    _rb.drag = 5;
                 }
                 _rb.gravityScale = 0;
             }
