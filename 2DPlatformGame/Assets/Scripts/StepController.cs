@@ -21,6 +21,11 @@ namespace PlatformGame
         
         private void Start()
         {
+            Setup();
+        }
+
+        private void Setup()
+        {
             remainingStepAmount = stepPeriod;
             if (StepCounter.current != null)
             {
@@ -28,7 +33,6 @@ namespace PlatformGame
                 _stepCounter.samplingFrequency = 16f;
                 InputSystem.EnableDevice(_stepCounter);
             }
-            
         }
 
         
@@ -45,31 +49,49 @@ namespace PlatformGame
                 if (firstDetectedStepAmount == -1)
                 {
                     firstDetectedStepAmount = currentSteps;
-                    GameObject.Find("AA").GetComponent<Text>().text = currentSteps.ToString();
+                    GameObject.Find("AA").GetComponent<Text>().text = "İlk bulunan adım sayısı : " + currentSteps.ToString();
                 }
-                stepCount.text = currentSteps.ToString();
+                stepCount.text = "Toplam atılan adım sayısı : " + currentSteps.ToString();
                 if (previousStepAmount != 0 && currentSteps > previousStepAmount)
                 {
                     int delta = currentSteps - previousStepAmount;
                     remainingStepAmount -= delta;
-                    GameObject.Find("BB").GetComponent<Text>().text = $"Rem : {remainingStepAmount}";
+                    //GameObject.Find("BB").GetComponent<Text>().text = $"Kalan Adım Sayısı : {remainingStepAmount}";
                     if (remainingStepAmount <= 0)
                     {
-                        //GameObject.Find("BB").GetComponent<Text>().text = $"Cur : {currentSteps} - Prev : {previousStepAmount} - Rem : {remainingStepAmount}";
                         GameController.Instance.UpdateCoinAmount(10,true);
                         remainingStepAmount += stepPeriod;
-                        GameObject.Find("BB").GetComponent<Text>().text += " --- Guncellendi : " + remainingStepAmount;
+                        //GameObject.Find("BB").GetComponent<Text>().text += " --- Guncellendi : " + remainingStepAmount;
                     }
+                    GameObject.Find("BB").GetComponent<Text>().text = $"Kalan Adım Sayısı : {remainingStepAmount}";
                 }
             }
+
+            // if (_stepCounter.enabled == false)
+            // {
+            //     GameObject.Find("CC").GetComponent<Text>().text = "FALSE";
+            // }
+            // else
+            // {
+            //     GameObject.Find("CC").GetComponent<Text>().text = "TRUE";
+            // }
         }
         
         
 
         private void OnApplicationPause(bool pauseStatus)
         {
+            if (pauseStatus)
+            {
+                InputSystem.DisableDevice(_stepCounter);
+            }
+            else
+            {
+                Setup();
+            }
             //true oldugunda adım sayısını kaydet
             //false oldugunda kaydedilen adım sayısıyla yeni deger karsılasıtır.
+            
         }
     }
 }

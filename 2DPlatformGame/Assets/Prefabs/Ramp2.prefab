@@ -1040,7 +1040,7 @@ SortingGroup:
   m_Enabled: 1
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 15
+  m_SortingOrder: 16
 --- !u!60 &1742545549630537529
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1068,8 +1068,8 @@ PolygonCollider2D:
     m_Paths:
     - - {x: -2.132492, y: 3.5160463}
       - {x: -2.1921535, y: 3.4658394}
-      - {x: -9.757056, y: -4.1245923}
-      - {x: -12.327259, y: -4.126039}
+      - {x: -9.746615, y: -4.16749}
+      - {x: -12.334855, y: -4.1646485}
       - {x: -12.339482, y: -6.4011006}
       - {x: 0.43436915, y: -6.4087524}
       - {x: 0.41985446, y: 3.5096824}
