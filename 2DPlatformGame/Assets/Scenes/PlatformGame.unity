@@ -1515,7 +1515,7 @@ MonoBehaviour:
   startOnAwake: 1
   frameDelay: 0.2
   loop: 0
-  OnAnimation:
+  OnCompleted:
     m_PersistentCalls:
       m_Calls: []
 --- !u!212 &735086331
@@ -1621,7 +1621,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b9114ecc7aa2941aee278fc0cf020d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spriteAnimationManager: {fileID: 0}
+  _spriteAnimationManager: {fileID: 735086330}
+  rewardAmount: 0
 --- !u!1001 &779407568
 PrefabInstance:
   m_ObjectHideFlags: 0
