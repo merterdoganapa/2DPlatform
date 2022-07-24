@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SpriteAnimationManager : MonoBehaviour
 {
@@ -11,21 +12,36 @@ public class SpriteAnimationManager : MonoBehaviour
     [SerializeField] private bool startOnAwake;
     [SerializeField] private float frameDelay;
     [SerializeField] private bool loop;
-    
+    [SerializeField] private UnityEvent OnCompleted;
+    private bool isStarted;
+
     private void Start()
     {
-        if(startOnAwake) StartAnimation(loop);
-    }
-    
-    public void StartAnimation(bool loop)
-    {
-        StartCoroutine(StartAnimationTask(loop));
+        if(startOnAwake) StartAnimation();
     }
 
-    private IEnumerator StartAnimationTask(bool loop)
+    public bool IsStarted
     {
+        get
+        {
+            return isStarted;
+        }
+        set
+        {
+            isStarted = value;
+        }
+    } 
+    
+    public void StartAnimation()
+    {
+        StartCoroutine(StartAnimationTask());
+    }
+
+    private IEnumerator StartAnimationTask()
+    {
+        isStarted = true;
         var spriteIndex = animationStartIndex;
-        while (this.loop || loop)
+        do
         {
             for (int i = spriteIndex ; i < animationSprites.Length ; i++)
             {
@@ -33,7 +49,8 @@ public class SpriteAnimationManager : MonoBehaviour
                 yield return new WaitForSeconds(frameDelay);
             }
             spriteIndex = 0;
-        }
+        } while (loop);
+        OnCompleted?.Invoke();
         yield return null;
     }
     

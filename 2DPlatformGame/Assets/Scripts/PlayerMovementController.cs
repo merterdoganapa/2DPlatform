@@ -22,7 +22,8 @@ namespace PlatformGame
         [SerializeField] private float jumpDelay = 0.25f;
         [SerializeField] private float slopeCheckDistance;
         private bool canJump = true;
-        private bool isJumping = false;
+        private bool isOnAir = false;
+        private bool checkSlope = true;
 
         [Header("Physics")] [SerializeField] private float _maxSpeed = 7f;
         [SerializeField] private float _linearDrag = 4f;
@@ -37,16 +38,21 @@ namespace PlatformGame
         [SerializeField] private Rigidbody2D _rb;
 
         [SerializeField] private LayerMask _platformLayerMask;
-        private bool decrease = false;
+        private bool isPressingMovementButton = false;
         [Header("Collision")] public bool onGround = true;
         [SerializeField] private Transform firstParent;
 
         [Header("Movement Animation")] [SerializeField]
         private AnimatorController _animatorController;
 
+        [SerializeField] private bool climbingLeftDirection = false;
+        [SerializeField] private bool climbingRightDirection = false;
+
         private bool _isBlinking = false;
 
-        private bool isOnSlope = false;
+        [SerializeField] private bool isOnSlope = false;
+
+        private float fallSpeed = 0;
 
         private void Start()
         {
@@ -57,19 +63,25 @@ namespace PlatformGame
         {
             bool wasGround = onGround;
             onGround = IsGrounded();
-            SlopeCheck();
+            if (checkSlope)
+            {
+                SlopeCheck();
+            }
 
             #region JumpAnimation
 
             if (onGround)
             {
-                if (wasGround)
+                if (!wasGround)
                 {
                     _animatorController.SetBool("IsFalling", false);
                 }
+
+                isOnAir = false;
             }
             else
             {
+                isOnAir = true;
                 if (_animatorController.GetBool("IsJumping") == false && _rb.velocity.y > 0)
                 {
                     _animatorController.SetBool("IsJumping", true);
@@ -93,7 +105,7 @@ namespace PlatformGame
                 StartCoroutine(Blink());
             }
 
-            if (decrease && horizontal != 0)
+            if (!isPressingMovementButton && horizontal != 0)
             {
                 if (horizontal < 0)
                 {
@@ -107,36 +119,33 @@ namespace PlatformGame
 
             ModifyPhysics();
         }
-        Vector2 slopeNormalPerp = Vector2.zero;
-
-        private void SlopeCheckVertical()
-        {
-            var checkPos = new Vector2(transform.position.x, transform.position.y - _boxCollider.size.y / 2);
-            RaycastHit2D hit = Physics2D.Raycast(checkPos, Vector2.down, slopeCheckDistance, _platformLayerMask);
-
-            if (hit)
-            {
-                slopeNormalPerp = Vector2.Perpendicular(hit.normal).normalized;
-            }
-        }
-
+        
         private void SlopeCheck()
         {
-            RaycastHit2D slopeHitFront  =
-                Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - _boxCollider.size.y / 2),
+            Vector2 slopeCheckPosition = new Vector2(transform.position.x, transform.position.y - _boxCollider.size.y / 3);
+            RaycastHit2D slopeHitFront =
+                Physics2D.Raycast(slopeCheckPosition,
                     Vector2.right, slopeCheckDistance, _platformLayerMask);
-            RaycastHit2D slopeHitBack  =
-                Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y - _boxCollider.size.y / 2),
+            RaycastHit2D slopeHitBack =
+                Physics2D.Raycast(slopeCheckPosition,
                     Vector2.left, slopeCheckDistance, _platformLayerMask);
+            //Debug.DrawLine(slopeCheckPosition,slopeCheckPosition + Vector2.right * 1 ,Color.red);
+            //Debug.DrawLine(slopeCheckPosition,slopeCheckPosition + Vector2.left * 1,Color.blue);
+            climbingRightDirection = false;
+            climbingLeftDirection = false;
             if (slopeHitFront)
             {
                 float angle = Vector3.Angle(slopeHitFront.normal, transform.up * -1);
-                isOnSlope = angle > 90;
+                isOnSlope = angle > 130;
+                climbingRightDirection = Mathf.Sign(transform.localScale.x) > 0;
+                //Debug.Log("Left");
             }
             else if (slopeHitBack)
             {
                 float angle = Vector3.Angle(slopeHitBack.normal, transform.up * -1);
-                isOnSlope = angle > 90;
+                isOnSlope = angle > 130;
+                climbingLeftDirection = Mathf.Sign(transform.localScale.x) < 0;
+                //Debug.Log("Right");
             }
             else
             {
@@ -151,14 +160,11 @@ namespace PlatformGame
 
         private IEnumerator TryJump()
         {
-            if (!canJump) yield break;
-            if (onGround)
-            {
-                canJump = false;
-                Jump();
-                yield return new WaitForSeconds(jumpDelay);
-                canJump = true;
-            }
+            if (!canJump || isOnSlope || !onGround) yield break;
+            canJump = false;
+            Jump();
+            yield return new WaitForSeconds(jumpDelay);
+            canJump = true;
         }
 
         IEnumerator JumpSqueeze(float xSqueeze, float ySqueeze, float seconds)
@@ -184,7 +190,7 @@ namespace PlatformGame
 
         public void MoveLeft()
         {
-            decrease = false;
+            isPressingMovementButton = true;
             if (horizontal > 0)
             {
                 horizontal = 0;
@@ -201,7 +207,7 @@ namespace PlatformGame
 
         public void MoveRight()
         {
-            decrease = false;
+            isPressingMovementButton = true;
             if (horizontal < 0)
             {
                 horizontal = 0;
@@ -253,32 +259,42 @@ namespace PlatformGame
                     _rb.gravityScale = gravity;
                 }
             }
-            else
-            {
-                _rb.gravityScale = gravity;
-            }
 
             #endregion
-            
+
             if (isOnSlope)
             {
-                _rb.velocity = new Vector2(_movementSpeed * slopeNormalPerp.x * -horizontal, _movementSpeed * slopeNormalPerp.y * -horizontal);
-                if (decrease)
+                if (checkSlope && (climbingLeftDirection || climbingRightDirection))
+                {
+                    _rb.velocity = new Vector2(_rb.velocity.x, 0);
+                    _rb.gravityScale = gravity;
+                }
+                else
+                {
+                    _rb.gravityScale = 10;
+                }
+
+                if (!isPressingMovementButton)
                 {
                     _rb.sharedMaterial = fullFriction;
                 }
                 else
                 {
-                    _rb.sharedMaterial = noFriction; 
+                    _rb.sharedMaterial = noFriction;
                 }
             }
-            _rb.drag = isOnSlope ? _linearDrag : 3;
+            else if (onGround)
+            {
+                _rb.sharedMaterial = noFriction;
+                _rb.gravityScale = gravity;
+            }
 
+            _rb.drag = isOnSlope ? _linearDrag : 8;
         }
 
         public void Stop()
         {
-            decrease = true;
+            isPressingMovementButton = false;
             _rb.velocity = new Vector2(0, _rb.velocity.y);
             _animatorController.SetFloat("Speed", 0);
         }
@@ -303,6 +319,7 @@ namespace PlatformGame
 
         public void Jump()
         {
+            checkSlope = false;
             _animatorController.SetBool("IsJumping", true);
             _rb.AddForce(Vector3.up * jumpForce, ForceMode2D.Impulse);
         }
@@ -322,6 +339,10 @@ namespace PlatformGame
                 gameObject.transform.SetParent(col.gameObject.transform);
                 if (IsGrounded())
                     _rb.velocity = new Vector2(0, _rb.velocity.y);
+            }
+            else if (col.gameObject.tag.Contains("Ground"))
+            {
+                checkSlope = true;
             }
         }
 

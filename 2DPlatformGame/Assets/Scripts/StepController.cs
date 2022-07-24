@@ -14,6 +14,7 @@ namespace PlatformGame
         private StepCounter _stepCounter;
         public Text stepCount;
         [SerializeField] private int stepPeriod;
+        [SerializeField] private int rewardAmount = 10;
         private int remainingStepAmount;
         private int firstDetectedStepAmount = -1;
         private int previousStepAmount = 0;
@@ -56,31 +57,19 @@ namespace PlatformGame
                 {
                     int delta = currentSteps - previousStepAmount;
                     remainingStepAmount -= delta;
-                    //GameObject.Find("BB").GetComponent<Text>().text = $"Kalan Adım Sayısı : {remainingStepAmount}";
                     if (remainingStepAmount <= 0)
                     {
-                        GameController.Instance.UpdateCoinAmount(10,true);
+                        GameController.Instance.UpdateCoinAmount(rewardAmount,true);
                         remainingStepAmount += stepPeriod;
-                        //GameObject.Find("BB").GetComponent<Text>().text += " --- Guncellendi : " + remainingStepAmount;
                     }
                     GameObject.Find("BB").GetComponent<Text>().text = $"Kalan Adım Sayısı : {remainingStepAmount}";
                 }
             }
 
-            // if (_stepCounter.enabled == false)
-            // {
-            //     GameObject.Find("CC").GetComponent<Text>().text = "FALSE";
-            // }
-            // else
-            // {
-            //     GameObject.Find("CC").GetComponent<Text>().text = "TRUE";
-            // }
         }
-        
-        
-
         private void OnApplicationPause(bool pauseStatus)
         {
+            if (_stepCounter == null) return;
             if (pauseStatus)
             {
                 InputSystem.DisableDevice(_stepCounter);
@@ -89,8 +78,6 @@ namespace PlatformGame
             {
                 Setup();
             }
-            //true oldugunda adım sayısını kaydet
-            //false oldugunda kaydedilen adım sayısıyla yeni deger karsılasıtır.
             
         }
     }
