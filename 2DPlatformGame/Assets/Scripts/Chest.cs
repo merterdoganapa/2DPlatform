@@ -2,12 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
+using Brainclude.Common;
 using UnityEngine;
 
-public class Chest : MonoBehaviour
+public class Chest : MonoBehaviour 
 {
     [SerializeField] private SpriteAnimationManager _spriteAnimationManager;
-    [SerializeField] private float rewardAmount;
+    [SerializeField] private RewardPanel rewardPanel;
+    [SerializeField] private int rewardAmount;
+    [SerializeField] private int rewardMultiplier;
     private bool isOpen;
     private bool isCollectable = false;
     private bool isRewardCollected = false;
@@ -29,7 +32,7 @@ public class Chest : MonoBehaviour
 
     private void Collect()
     {
-        Debug.Log("Reward Amount : " + rewardAmount);
+        rewardPanel.Open(rewardAmount.ToString() , rewardMultiplier);
         isRewardCollected = true;
     }
 
@@ -53,4 +56,5 @@ public class Chest : MonoBehaviour
             isCollectable = false;
         }
     }
+
 }
