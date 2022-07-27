@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private CoinUI _coinUIController;
+    [SerializeField] private StatUI _coinUIController;
     private static GameController _instance;
 
     public static GameController Instance
@@ -21,13 +21,13 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         int coinAmount = CoinController.Instance.GetCoinAmount();
-        _coinUIController.UpdateCoin(coinAmount);
+        _coinUIController.UpdateStat(coinAmount);
     }
 
     public void UpdateCoinAmount(int coinAmount,bool isIncreasing)
     {
         int updatedAmount = isIncreasing ? CoinController.Instance.IncreaseCoinAmount(coinAmount) : CoinController.Instance.DecreaseCoinAmount(coinAmount);
-        _coinUIController.UpdateCoin(updatedAmount);
+        _coinUIController.UpdateStat(updatedAmount);
     }
     
     public void OnPauseButtonClick()

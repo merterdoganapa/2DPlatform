@@ -12,22 +12,28 @@ namespace PlatformGame
     public class StepController : MonoBehaviour
     {
         private StepCounter _stepCounter;
-        public Text stepCount;
+        [SerializeField] private StatUI _stepStatUI;
         [SerializeField] private int stepPeriod;
         [SerializeField] private int rewardAmount = 10;
         private int remainingStepAmount;
-        private int firstDetectedStepAmount = -1;
         private int previousStepAmount = 0;
         private int currentSteps = 0;
-        
+        private bool stepDetected = false;
+        private static string playerPrefsStepString = "step_amount";
+#if !UNITY_EDITOR
         private void Start()
         {
+            PlayerPrefsController.TryGenerateKey(playerPrefsStepString, 0);
             Setup();
+            int stepAmount = GetStepAmount();
+            _stepStatUI.UpdateStat(stepAmount);
         }
 
         private void Setup()
         {
-            remainingStepAmount = stepPeriod;
+            //remainingStepAmount = stepPeriod;
+            currentSteps = 0;
+            previousStepAmount = 0;
             if (StepCounter.current != null)
             {
                 _stepCounter = StepCounter.current;
@@ -47,29 +53,40 @@ namespace PlatformGame
                 {
                     return;
                 }
-                if (firstDetectedStepAmount == -1)
+
+                if (stepDetected == false)
                 {
-                    firstDetectedStepAmount = currentSteps;
-                    GameObject.Find("AA").GetComponent<Text>().text = "İlk bulunan adım sayısı : " + currentSteps.ToString();
+                    stepDetected = true;
+                    previousStepAmount = currentSteps;
+                    //remainingStepAmount = 
+                    int stepAmount = GetStepAmount();
+                    remainingStepAmount = stepPeriod - (stepAmount % stepPeriod);
                 }
-                stepCount.text = "Toplam atılan adım sayısı : " + currentSteps.ToString();
+                
                 if (previousStepAmount != 0 && currentSteps > previousStepAmount)
                 {
                     int delta = currentSteps - previousStepAmount;
+                    int currentStepAmount = IncreaseStepAmount(delta);
+                    _stepStatUI.UpdateStat(currentStepAmount);
                     remainingStepAmount -= delta;
                     if (remainingStepAmount <= 0)
                     {
                         GameController.Instance.UpdateCoinAmount(rewardAmount,true);
                         remainingStepAmount += stepPeriod;
                     }
-                    GameObject.Find("BB").GetComponent<Text>().text = $"Kalan Adım Sayısı : {remainingStepAmount}";
                 }
             }
 
         }
+
+        public int GetStepAmount() => PlayerPrefsController.TryGetValue<int>(playerPrefsStepString);
+        
+        public int IncreaseStepAmount(int amount) => PlayerPrefsController.IncreaseValue(playerPrefsStepString, amount);
+        
         private void OnApplicationPause(bool pauseStatus)
         {
             if (_stepCounter == null) return;
+            stepDetected = false;
             if (pauseStatus)
             {
                 InputSystem.DisableDevice(_stepCounter);
@@ -78,7 +95,8 @@ namespace PlatformGame
             {
                 Setup();
             }
-            
         }
+#endif
+        
     }
 }
