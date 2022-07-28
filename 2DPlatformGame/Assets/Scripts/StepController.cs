@@ -20,7 +20,18 @@ namespace PlatformGame
         private int currentSteps = 0;
         private bool stepDetected = false;
         private static string playerPrefsStepString = "step_amount";
-#if !UNITY_EDITOR
+        private static StepController _instance;
+
+        public static StepController Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = FindObjectOfType<StepController>();
+                return _instance;
+            }
+        }
+        
+        
         private void Start()
         {
             PlayerPrefsController.TryGenerateKey(playerPrefsStepString, 0);
@@ -31,7 +42,6 @@ namespace PlatformGame
 
         private void Setup()
         {
-            //remainingStepAmount = stepPeriod;
             currentSteps = 0;
             previousStepAmount = 0;
             if (StepCounter.current != null)
@@ -45,6 +55,7 @@ namespace PlatformGame
         
         private void Update()
         {
+            #if !UNITY_EDITOR
             if (_stepCounter.enabled)
             {
                 previousStepAmount = currentSteps; 
@@ -58,7 +69,6 @@ namespace PlatformGame
                 {
                     stepDetected = true;
                     previousStepAmount = currentSteps;
-                    //remainingStepAmount = 
                     int stepAmount = GetStepAmount();
                     remainingStepAmount = stepPeriod - (stepAmount % stepPeriod);
                 }
@@ -68,20 +78,31 @@ namespace PlatformGame
                     int delta = currentSteps - previousStepAmount;
                     int currentStepAmount = IncreaseStepAmount(delta);
                     _stepStatUI.UpdateStat(currentStepAmount);
-                    remainingStepAmount -= delta;
-                    if (remainingStepAmount <= 0)
-                    {
-                        GameController.Instance.UpdateCoinAmount(rewardAmount,true);
-                        remainingStepAmount += stepPeriod;
-                    }
                 }
             }
+            #endif
 
         }
 
         public int GetStepAmount() => PlayerPrefsController.TryGetValue<int>(playerPrefsStepString);
         
-        public int IncreaseStepAmount(int amount) => PlayerPrefsController.IncreaseValue(playerPrefsStepString, amount);
+        public int IncreaseStepAmount(int amount) 
+        { 
+            int newValue = PlayerPrefsController.IncreaseValue(playerPrefsStepString, amount);
+            _stepStatUI.UpdateStat(newValue);
+            return newValue;
+        }
+        public int DecreaseStepAmount(int amount) 
+        { 
+            int newValue = PlayerPrefsController.DecreaseValue(playerPrefsStepString, amount);
+            _stepStatUI.UpdateStat(newValue);
+            return newValue;
+        }
+        public bool IsHaveEnoughSteps(int desiredAmount)
+        {
+            int currentAmount = GetStepAmount();
+            return currentAmount >= desiredAmount;
+        }
         
         private void OnApplicationPause(bool pauseStatus)
         {
@@ -96,7 +117,6 @@ namespace PlatformGame
                 Setup();
             }
         }
-#endif
         
     }
 }

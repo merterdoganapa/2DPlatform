@@ -160,7 +160,7 @@ TextureImporter:
     second: Iconic2048x2048_51
   - first:
       213: 221092906822415082
-    second: Iconic2048x2048_52
+    second: market_button
   - first:
       213: 3910533111204631607
     second: Iconic2048x2048_53
@@ -840,8 +840,8 @@ TextureImporter:
         serializedVersion: 2
         x: 146
         y: 1699
-        width: 130
-        height: 129
+        width: 128
+        height: 130
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1343,7 +1343,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 146
-        y: 1403
+        y: 1401
         width: 130
         height: 129
       alignment: 0
@@ -1675,7 +1675,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Iconic2048x2048_52
+      name: market_button
       rect:
         serializedVersion: 2
         x: 738

@@ -17,7 +17,7 @@ public class RewardPanel : MonoBehaviour,IRewardAdListener
         gameObject.SetActive(true);
         rewardText.text = rewardAmount;
         this.multiplier = multiplier;
-        rewardMultiplierText.text = "x" + multiplier;
+        rewardMultiplierText.text = $"x{multiplier} Claim";
     }
     
     public void Close()
