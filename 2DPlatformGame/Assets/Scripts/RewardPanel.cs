@@ -28,7 +28,7 @@ public class RewardPanel : MonoBehaviour,IRewardAdListener
     public void OnRewardButtonClick()
     {
         int rewardAmount = Convert.ToInt16(rewardText.text);
-        GameController.Instance.UpdateCoinAmount(rewardAmount,true);
+        CoinController.Instance.IncreaseCoinAmount(rewardAmount);
         Close();
     }
 
@@ -42,6 +42,6 @@ public class RewardPanel : MonoBehaviour,IRewardAdListener
     public void OnRewardEarned()
     {
         int rewardAmount = Convert.ToInt16(rewardText.text) * multiplier;
-        GameController.Instance.UpdateCoinAmount(rewardAmount,true);
+        CoinController.Instance.IncreaseCoinAmount(rewardAmount);
     }
 }

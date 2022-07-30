@@ -24,7 +24,8 @@ namespace PlatformGame
         private bool canJump = true;
         private bool isOnAir = false;
         private bool checkSlope = true;
-
+        
+        
         [Header("Physics")] [SerializeField] private float _maxSpeed = 7f;
         [SerializeField] private float _linearDrag = 4f;
         [SerializeField] private float gravity = 1;
@@ -49,14 +50,14 @@ namespace PlatformGame
         [SerializeField] private bool climbingRightDirection = false;
 
         private bool _isBlinking = false;
-
-        [SerializeField] private bool isOnSlope = false;
-
+        private bool isOnSlope = false;
         private float fallSpeed = 0;
-
+        [SerializeField] private PlayerData data;
         private void Start()
         {
             firstParent = transform.parent;
+            _maxSpeed = data.maxMovementSpeed;
+            jumpForce = data.jumpForce;
         }
 
         private void Update()

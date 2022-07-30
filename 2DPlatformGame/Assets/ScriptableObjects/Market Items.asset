@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 456a8fd930988a74dae725501c989df5, type: 3}
+  m_Name: Market Items
+  m_EditorClassIdentifier: 
+  items:
+  - name: Jump Upgrade
+    description: "Al\u0131nd\u0131\u011F\u0131nda karakter %10 daha fazla yukar\u0131
+      s\u0131\xE7rar."
+    type: 0
+    price: 100
+    texture: {fileID: 2800000, guid: 6dbff2481aea169448a8ed568d1a3bce, type: 3}
+    isPurchased: 0
+  - name: Movement Speed
+    description: Gain %10 bonus movement speed.
+    type: 1
+    price: 300
+    texture: {fileID: 2800000, guid: f5ff40c8e5e96304fbdb346b60377d8f, type: 3}
+    isPurchased: 0
+  - name: Max Health
+    description: Gain %10 bonus movement speed.
+    type: 2
+    price: 200
+    texture: {fileID: 2800000, guid: e8c1620511d54aa4b8b984cfab189f6c, type: 3}
+    isPurchased: 0
+  - name: Health Position
+    description: Gain %10 bonus movement speed.
+    type: 3
+    price: 50
+    texture: {fileID: 2800000, guid: 48a99b4fa142a4e41a5db6092abb9d62, type: 3}
+    isPurchased: 0

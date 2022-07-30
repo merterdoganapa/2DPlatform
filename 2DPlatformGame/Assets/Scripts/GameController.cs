@@ -19,24 +19,12 @@ public class GameController : MonoBehaviour
             return _instance;
         }
     }
-
-    private void Start()
-    {
-        
-    }
-
-    public void UpdateCoinAmount(int coinAmount,bool isIncreasing)
-    {
-        int updatedAmount = isIncreasing ? CoinController.Instance.IncreaseCoinAmount(coinAmount) : CoinController.Instance.DecreaseCoinAmount(coinAmount);
-        
-    }
-
+    
     public void ConvertStepsToCoin()
     {
         int stepAmount = StepController.Instance.GetStepAmount();
-        UpdateCoinAmount(stepAmount, true);
+        CoinController.Instance.IncreaseCoinAmount(stepAmount);
         StepController.Instance.DecreaseStepAmount(stepAmount);
-
     }
     
     public void OnPauseButtonClick()

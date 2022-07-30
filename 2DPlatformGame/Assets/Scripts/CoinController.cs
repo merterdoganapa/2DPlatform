@@ -21,7 +21,7 @@ public class CoinController : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(this);
+        //DontDestroyOnLoad(this);
         PlayerPrefsController.TryGenerateKey(playerPrefsCoinString, 0);
     }
 

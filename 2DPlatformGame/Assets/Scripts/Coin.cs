@@ -10,7 +10,7 @@ public class Coin : MonoBehaviour
     private void Collect()
     {
         AudioSource.PlayClipAtPoint(clip, transform.position,1);
-        GameController.Instance.UpdateCoinAmount(1,true);
+        CoinController.Instance.IncreaseCoinAmount(1);
         Destroy(gameObject);
     }
     

@@ -1618,9 +1618,9 @@ GameObject:
   - component: {fileID: 848888708}
   - component: {fileID: 848888707}
   - component: {fileID: 848888710}
+  - component: {fileID: 848888711}
   - component: {fileID: 848888712}
   - component: {fileID: 848888713}
-  - component: {fileID: 848888711}
   - component: {fileID: 848888714}
   m_Layer: 0
   m_Name: Player
@@ -1774,7 +1774,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _movementSpeed: 10
-  jumpForce: 15
+  jumpForce: 19
   jumpDelay: 0.25
   slopeCheckDistance: 0.8
   _maxSpeed: 5
@@ -1793,7 +1793,7 @@ MonoBehaviour:
   _animatorController: {fileID: 848888714}
   climbingLeftDirection: 0
   climbingRightDirection: 0
-  isOnSlope: 0
+  data: {fileID: 11400000, guid: 94765c14b1ce40842a2b073ce89ff6bc, type: 2}
 --- !u!114 &848888713
 MonoBehaviour:
   m_ObjectHideFlags: 0
