@@ -30,6 +30,16 @@ public class Shop : MonoBehaviour
         }
     }
 
+    public void OpenMarket()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void CloseMarket()
+    {
+        gameObject.SetActive(false);
+    }
+    
     public void OnItemPurchased(UI_Shop ui_shop)
     {
         playerData.UpdateData(ui_shop.itemType);
