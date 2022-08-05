@@ -18,7 +18,7 @@ namespace PlatformGame
 
         [Header("Vertical Movement")] [SerializeField]
         private float jumpForce;
-
+        [SerializeField] private AudioClip jumpSound;
         [SerializeField] private float jumpDelay = 0.25f;
         [SerializeField] private float slopeCheckDistance;
         private bool canJump = true;
@@ -46,8 +46,8 @@ namespace PlatformGame
         [Header("Movement Animation")] [SerializeField]
         private AnimatorController _animatorController;
 
-        [SerializeField] private bool climbingLeftDirection = false;
-        [SerializeField] private bool climbingRightDirection = false;
+        private bool climbingLeftDirection = false;
+        private bool climbingRightDirection = false;
 
         private bool _isBlinking = false;
         private bool isOnSlope = false;
@@ -163,6 +163,7 @@ namespace PlatformGame
         {
             if (!canJump || isOnSlope || !onGround) yield break;
             canJump = false;
+            AudioSource.PlayClipAtPoint(jumpSound,transform.position);
             Jump();
             yield return new WaitForSeconds(jumpDelay);
             canJump = true;

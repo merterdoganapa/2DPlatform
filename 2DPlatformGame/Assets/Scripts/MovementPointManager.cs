@@ -10,7 +10,7 @@ namespace PlatformGame
 {
     public class MovementPointManager : MonoBehaviour
     {
-        
+        public GameObject pointsParentPrefab;
         #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
@@ -56,6 +56,12 @@ namespace PlatformGame
                 Transform movementPointTransform = movementPoint.transform;
                 movementPoint.name = "Movement Point";
                 Transform movementPointParent = manager.transform.Find("MovementPointParent");
+                if (movementPointParent == null)
+                {
+                    movementPointParent = new GameObject().transform;
+                    movementPointParent.name = "MovementPointParent";
+                    movementPointParent.SetParent(manager.transform);
+                }
                 movementPointTransform.SetParent(movementPointParent);
                 movementPointTransform.position = manager.transform.position;
             }

@@ -8,7 +8,6 @@ using UnityEngine;
 public class Chest : MonoBehaviour 
 {
     [SerializeField] private SpriteAnimationManager _spriteAnimationManager;
-    [SerializeField] private RewardPanel rewardPanel;
     [SerializeField] private int rewardAmount;
     [SerializeField] private int rewardMultiplier;
     private bool isOpen;
@@ -32,7 +31,7 @@ public class Chest : MonoBehaviour
 
     private void Collect()
     {
-        rewardPanel.Open(rewardAmount.ToString() , rewardMultiplier);
+        RewardPanel.Instance.Open(rewardAmount.ToString() , rewardMultiplier);
         isRewardCollected = true;
     }
 

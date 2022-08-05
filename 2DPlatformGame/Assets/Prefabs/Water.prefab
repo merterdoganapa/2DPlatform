@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4410998977705667756}
-  - component: {fileID: 4410998977705667795}
   - component: {fileID: 2887446952228183539}
   m_Layer: 0
   m_Name: Water
@@ -33,19 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &4410998977705667795
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4410998977705667794}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.544694, y: 1.5400143, z: 1}
-  m_Center: {x: 0.0062794685, y: -0.5086193, z: 0}
 --- !u!210 &2887446952228183539
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -174,3 +160,6 @@ MonoBehaviour:
   startOnAwake: 1
   frameDelay: 0.1
   loop: 1
+  OnCompleted:
+    m_PersistentCalls:
+      m_Calls: []

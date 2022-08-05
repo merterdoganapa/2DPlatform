@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 public class PlayerData : ScriptableObject
 {
     public float maxMovementSpeed;
-    public float maxHealth;
+    public int maxHealth;
     public float healthPotionCount;
     public float jumpForce;
 
@@ -25,7 +25,7 @@ public class PlayerData : ScriptableObject
                 healthPotionCount += 1;
                 break;
             case ItemType.MaxHealthUpgrade:
-                maxHealth += maxHealth * 0.1f;
+                maxHealth += 10;
                 break;
             default:
                 break;

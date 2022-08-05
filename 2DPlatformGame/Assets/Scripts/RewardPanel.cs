@@ -11,6 +11,16 @@ public class RewardPanel : MonoBehaviour,IRewardAdListener
     [SerializeField] private TextMeshProUGUI rewardText;
     [SerializeField] private TextMeshProUGUI rewardMultiplierText;
     private int multiplier = 2;
+    private static RewardPanel _instance;
+
+    public static RewardPanel Instance
+    {
+        get
+        {
+            if (_instance == null) _instance = FindObjectOfType<RewardPanel>(true);
+            return _instance;
+        }
+    }
 
     public void Open(string rewardAmount,int multiplier)
     {

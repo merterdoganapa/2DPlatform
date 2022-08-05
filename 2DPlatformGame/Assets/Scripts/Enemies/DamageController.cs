@@ -1,15 +1,38 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Timers;
 using UnityEngine;
 
 public class DamageController : MonoBehaviour
 {
-    [SerializeField] private float damage;
-    private void OnCollisionEnter2D(Collision2D col)
+    [SerializeField] private int damage;
+    [SerializeField] private float time;
+    private float timer;
+
+    private void Update()
     {
-        TakeDamage takeDamage = col.gameObject.GetComponent<TakeDamage>();
-        if (takeDamage == null) return;
-        takeDamage.Take(damage);
+        timer += Time.deltaTime;
+    }
+
+    private void TryGiveDamage(GameObject targetObject)
+    {
+        Health health = targetObject.GetComponent<Health>();
+        if (health == null) return;
+        health.TakeDamage(damage);
+    }
+    
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (!(timer > time)) return;
+        TryGiveDamage(collision.gameObject);
+        timer = 0f;
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (!(timer > time)) return;
+        TryGiveDamage(collision.gameObject);
+        timer = 0f;
     }
 }

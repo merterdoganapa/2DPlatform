@@ -9,7 +9,7 @@ namespace PlatformGame
     [RequireComponent(typeof(MovementPointManager))]
     public class MoveBetweenPoints : MonoBehaviour
     {
-        [SerializeField] private Transform _movementPointsParent;
+        private Transform _movementPointsParent;
         [SerializeField] private float _movementSpeed;
         private Vector3[] _movementPoints;
         private int currentPointIndex = 0;
@@ -20,6 +20,7 @@ namespace PlatformGame
         
         private void Awake()
         {
+            _movementPointsParent = transform.Find("MovementPointParent");
             if (_movementPointsParent == null) return;
             _movementDirection = MovementDirection.Next;
             var childCount = _movementPointsParent.childCount;
