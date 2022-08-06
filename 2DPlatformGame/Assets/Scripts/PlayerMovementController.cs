@@ -18,13 +18,12 @@ namespace PlatformGame
 
         [Header("Vertical Movement")] [SerializeField]
         private float jumpForce;
+
         [SerializeField] private AudioClip jumpSound;
         [SerializeField] private float jumpDelay = 0.25f;
         [SerializeField] private float slopeCheckDistance;
-        private bool canJump = true;
         private bool isOnAir = false;
         private bool checkSlope = true;
-        
         
         [Header("Physics")] [SerializeField] private float _maxSpeed = 7f;
         [SerializeField] private float _linearDrag = 4f;
@@ -41,7 +40,7 @@ namespace PlatformGame
         [SerializeField] private LayerMask _platformLayerMask;
         private bool isPressingMovementButton = false;
         [Header("Collision")] public bool onGround = true;
-        [SerializeField] private Transform firstParent;
+        private Transform firstParent;
 
         [Header("Movement Animation")] [SerializeField]
         private AnimatorController _animatorController;
@@ -53,11 +52,57 @@ namespace PlatformGame
         private bool isOnSlope = false;
         private float fallSpeed = 0;
         [SerializeField] private PlayerData data;
+        [SerializeField] private InputManager _inputManager;
+
+
+        private void OnEnable()
+        {
+            _inputManager.OnJumpButtonPressed += HandlePlayerJump;
+            _inputManager.OnMovementButtonPressed += HandlePlayerMovement;
+            _inputManager.OnMovementButtonReleased += Stop;
+        }
+
+        private void OnDisable()
+        {
+            _inputManager.OnJumpButtonPressed -= HandlePlayerJump;
+            _inputManager.OnMovementButtonPressed -= HandlePlayerMovement;
+            _inputManager.OnMovementButtonReleased -= Stop;
+        }
+
         private void Start()
         {
             firstParent = transform.parent;
             _maxSpeed = data.maxMovementSpeed;
             jumpForce = data.jumpForce;
+        }
+
+        private void HandlePlayerMovement()
+        {
+            isPressingMovementButton = true;
+            var horizontalInput = _inputManager.Horizontal;
+            if ((horizontalInput > 0 && _isFacingLeft) || (horizontalInput < 0 && !_isFacingLeft))
+            {
+                Flip();
+            }
+            
+            _animatorController.SetFloat("Speed", 1);
+
+            _rb.velocity = IsGrounded() ? new Vector2(horizontalInput * _movementSpeed, _rb.velocity.y) : new Vector2(horizontalInput * (_movementSpeed / 1.5f) , _rb.velocity.y);
+            
+            if (Mathf.Abs(_rb.velocity.x) > _maxSpeed)
+            {
+                _rb.velocity = new Vector2(Mathf.Sign(_rb.velocity.x) * _maxSpeed, _rb.velocity.y);   
+            }
+        }
+
+        private bool CanJump() => onGround && !isOnSlope;
+
+        private void HandlePlayerJump()
+        {
+            if (!CanJump()) return;
+            checkSlope = false;
+            _animatorController.SetBool("IsJumping", true);
+            _rb.velocity = Vector2.up * jumpForce;
         }
 
         private void Update()
@@ -98,7 +143,7 @@ namespace PlatformGame
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                StartCoroutine(TryJump());
+                HandlePlayerJump();
             }
 
             if (_isBlinking == false)
@@ -106,24 +151,13 @@ namespace PlatformGame
                 StartCoroutine(Blink());
             }
 
-            if (!isPressingMovementButton && horizontal != 0)
-            {
-                if (horizontal < 0)
-                {
-                    IncreaseHorizontal();
-                }
-                else
-                {
-                    DecreaseHorizontal();
-                }
-            }
-
             ModifyPhysics();
         }
-        
+
         private void SlopeCheck()
         {
-            Vector2 slopeCheckPosition = new Vector2(transform.position.x, transform.position.y - _boxCollider.size.y / 3);
+            Vector2 slopeCheckPosition =
+                new Vector2(transform.position.x, transform.position.y - _boxCollider.size.y / 3);
             RaycastHit2D slopeHitFront =
                 Physics2D.Raycast(slopeCheckPosition,
                     Vector2.right, slopeCheckDistance, _platformLayerMask);
@@ -151,98 +185,6 @@ namespace PlatformGame
             else
             {
                 isOnSlope = false;
-            }
-        }
-
-        public void OnJumpButtonClick()
-        {
-            StartCoroutine(TryJump());
-        }
-
-        private IEnumerator TryJump()
-        {
-            if (!canJump || isOnSlope || !onGround) yield break;
-            canJump = false;
-            AudioSource.PlayClipAtPoint(jumpSound,transform.position);
-            Jump();
-            yield return new WaitForSeconds(jumpDelay);
-            canJump = true;
-        }
-
-        IEnumerator JumpSqueeze(float xSqueeze, float ySqueeze, float seconds)
-        {
-            Vector3 originalSize = transform.localScale;
-            Vector3 newSize = new Vector3(xSqueeze, ySqueeze, originalSize.z);
-            float t = 0f;
-            while (t <= 1.0)
-            {
-                t += Time.deltaTime / seconds;
-                transform.localScale = Vector3.Lerp(originalSize, newSize, t);
-                yield return null;
-            }
-
-            t = 0f;
-            while (t <= 1.0)
-            {
-                t += Time.deltaTime / seconds;
-                transform.localScale = Vector3.Lerp(newSize, originalSize, t);
-                yield return null;
-            }
-        }
-
-        public void MoveLeft()
-        {
-            isPressingMovementButton = true;
-            if (horizontal > 0)
-            {
-                horizontal = 0;
-            }
-
-            DecreaseHorizontal();
-            if (!_isFacingLeft)
-            {
-                Flip();
-            }
-
-            MoveCharacter();
-        }
-
-        public void MoveRight()
-        {
-            isPressingMovementButton = true;
-            if (horizontal < 0)
-            {
-                horizontal = 0;
-            }
-
-            IncreaseHorizontal();
-            if (_isFacingLeft)
-            {
-                Flip();
-            }
-
-            MoveCharacter();
-        }
-
-        private void IncreaseHorizontal()
-        {
-            horizontal += Time.deltaTime;
-            horizontal = Mathf.Min(horizontal, 1);
-        }
-
-        private void DecreaseHorizontal()
-        {
-            horizontal -= Time.deltaTime;
-            horizontal = Mathf.Max(horizontal, -1);
-        }
-
-        private void MoveCharacter()
-        {
-            _rb.velocity = new Vector2(horizontal * _movementSpeed, _rb.velocity.y);
-            _animatorController.SetFloat("Speed", 1);
-            if (Mathf.Abs(_rb.velocity.x) > _maxSpeed)
-            {
-                _rb.velocity = new Vector2(Mathf.Sign(_rb.velocity.x) * _maxSpeed, _rb.velocity.y);
             }
         }
 
@@ -276,22 +218,13 @@ namespace PlatformGame
                     _rb.gravityScale = 10;
                 }
 
-                if (!isPressingMovementButton)
-                {
-                    _rb.sharedMaterial = fullFriction;
-                }
-                else
-                {
-                    _rb.sharedMaterial = noFriction;
-                }
+                _rb.sharedMaterial = !isPressingMovementButton ? fullFriction : noFriction;
             }
             else if (onGround)
             {
-                _rb.sharedMaterial = noFriction;
+                _rb.sharedMaterial = !isPressingMovementButton ? fullFriction : noFriction;
                 _rb.gravityScale = gravity;
             }
-
-            _rb.drag = isOnSlope ? _linearDrag : 8;
         }
 
         public void Stop()
@@ -319,20 +252,12 @@ namespace PlatformGame
             _isFacingLeft = !_isFacingLeft;
         }
 
-        public void Jump()
-        {
-            checkSlope = false;
-            _animatorController.SetBool("IsJumping", true);
-            _rb.AddForce(Vector3.up * jumpForce, ForceMode2D.Impulse);
-        }
-
         private bool IsGrounded()
         {
             RaycastHit2D raycastHit2D = Physics2D.BoxCast(_boxCollider.bounds.center, _boxCollider.bounds.size, 0f,
                 Vector2.down, 0.1f, _platformLayerMask);
             return raycastHit2D.collider != null;
         }
-
 
         private void OnCollisionEnter2D(Collision2D col)
         {
