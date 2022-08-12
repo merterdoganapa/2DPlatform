@@ -8,7 +8,6 @@ public class PlayerData : ScriptableObject
 {
     public float maxMovementSpeed;
     public int maxHealth;
-    public float healthPotionCount;
     public float jumpForce;
 
     public void UpdateData(ItemType type)
@@ -20,9 +19,6 @@ public class PlayerData : ScriptableObject
                 break;
             case ItemType.MovementSpeedUpgrade:
                 maxMovementSpeed += maxMovementSpeed * 0.1f;
-                break;
-            case ItemType.HealthPotion:
-                healthPotionCount += 1;
                 break;
             case ItemType.MaxHealthUpgrade:
                 maxHealth += 10;

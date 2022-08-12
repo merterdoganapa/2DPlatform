@@ -27,14 +27,8 @@ MonoBehaviour:
     texture: {fileID: 2800000, guid: f5ff40c8e5e96304fbdb346b60377d8f, type: 3}
     isPurchased: 0
   - name: Max Health
-    description: Gain %10 bonus movement speed.
+    description: Increase your character max health.
     type: 2
     price: 200
     texture: {fileID: 2800000, guid: e8c1620511d54aa4b8b984cfab189f6c, type: 3}
-    isPurchased: 0
-  - name: Health Potion
-    description: Gain %10 bonus movement speed.
-    type: 3
-    price: 50
-    texture: {fileID: 2800000, guid: 48a99b4fa142a4e41a5db6092abb9d62, type: 3}
     isPurchased: 0

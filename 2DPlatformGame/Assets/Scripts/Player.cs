@@ -20,14 +20,21 @@ public class Player : MonoBehaviour
     private void OnEnable()
     {
         Health.Damaged += OnTakeDamage;
+        Health.Healed += OnHealed;
     }
 
     private void OnDisable()
     {
         Health.Damaged -= OnTakeDamage;
+        Health.Healed -= OnHealed;
     }
 
     private void OnTakeDamage(int damage)
+    {
+        _healthSlider.value = Health.CurrentHealth;
+    }
+
+    private void OnHealed(int amount)
     {
         _healthSlider.value = Health.CurrentHealth;
     }

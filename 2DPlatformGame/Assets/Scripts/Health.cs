@@ -10,8 +10,8 @@ public class Health : MonoBehaviour
 
     [SerializeField] private PlayerData _playerData;
 
-    int _maxHealth = 100;
-    public int MaxHealth => _maxHealth;
+    int _maxHealth;
+    public int MaxHealth => _playerData.maxHealth;
 
     int _currentHealth;
     public int CurrentHealth
@@ -19,7 +19,6 @@ public class Health : MonoBehaviour
         get => _currentHealth;
         set
         {
-            // ensure we can't go above our max health
             if(value > _maxHealth)
             {
                 value = _maxHealth;
@@ -28,10 +27,21 @@ public class Health : MonoBehaviour
         }
     }
 
+    private static Health _instance;
+
+    public static Health Instance
+    {
+        get
+        {
+            if (_instance == null) _instance = FindObjectOfType<Health>();
+            return _instance;
+        }
+    }
+    
     private void Awake()
     {
         _maxHealth = _playerData.maxHealth;
-        CurrentHealth = _maxHealth;
+        CurrentHealth = _playerData.maxHealth;
     }
 
     public void Heal(int amount)

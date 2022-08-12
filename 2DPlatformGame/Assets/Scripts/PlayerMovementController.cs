@@ -151,7 +151,17 @@ namespace PlatformGame
                 StartCoroutine(Blink());
             }
 
+            if (transform.position.y < -2.5)
+            {
+                Die();    
+            }
+
             ModifyPhysics();
+        }
+
+        private void Die()
+        {
+            gameObject.SetActive(false);
         }
 
         private void SlopeCheck()

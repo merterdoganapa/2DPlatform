@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Coin : MonoBehaviour
+public class Coin : MonoBehaviour,ICollectable
 {
     public AudioClip clip;
 
-    private void Collect()
+    public void Collect()
     {
         AudioSource.PlayClipAtPoint(clip, transform.position,1);
         CoinController.Instance.IncreaseCoinAmount(1);
