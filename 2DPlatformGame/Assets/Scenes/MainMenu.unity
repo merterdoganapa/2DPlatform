@@ -5757,9 +5757,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1898210942}
     m_Modifications:
+    - target: {fileID: 5862952424415637279, guid: d46f94583d7df7047932ccda3649f234, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5862952425302865602, guid: d46f94583d7df7047932ccda3649f234, type: 3}
       propertyPath: m_Name
       value: Market
+      objectReference: {fileID: 0}
+    - target: {fileID: 5862952425302865602, guid: d46f94583d7df7047932ccda3649f234, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5862952425302865603, guid: d46f94583d7df7047932ccda3649f234, type: 3}
       propertyPath: m_Pivot.x

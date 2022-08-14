@@ -30,6 +30,11 @@ public class GameController : MonoBehaviour
             PlayerPrefsController.TrySetValue("current_level",activeSceneIndex);
             LoadLevelByBuildIndex(nextSceneIndex);
         }
+        else
+        {
+            PlayerPrefsController.TrySetValue("current_level",0);
+            LoadLevelByBuildIndex(0);
+        }
     }
 
     private void LoadLevelByBuildIndex(int index)
