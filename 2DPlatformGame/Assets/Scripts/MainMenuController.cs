@@ -14,13 +14,14 @@ public class MainMenuController : MonoBehaviour
         {
             Permission.RequestUserPermission("android.permission.ACTIVITY_RECOGNITION");
         }
-
+        PlayerPrefsController.TryGenerateKey("current_level",0);
         playButton.rectTransform.DOScale(1.2f, 1f).SetLoops(-1, LoopType.Yoyo);
     }
-
+    
     public void OnPlayButtonClick()
     {
-        SceneManager.LoadScene(1);
+        int levelIndex = PlayerPrefsController.TryGetValue<int>("current_level");
+        SceneManager.LoadScene(levelIndex + 1);
     }
 
     public void OnExitButtonClick()

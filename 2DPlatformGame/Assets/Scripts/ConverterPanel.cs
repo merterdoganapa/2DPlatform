@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ConverterPanel : MonoBehaviour
+public class ConverterPanel : PanelController
 {
     [SerializeField] private int minimumStepAmount;
     [SerializeField] private Button convertButton;
@@ -36,7 +36,7 @@ public class ConverterPanel : MonoBehaviour
     public void Open()
     {
         UpdateContent();
-        gameObject.SetActive(true);
+        base.Open();
     }
 
     private void UpdateColors(bool fade)
@@ -55,7 +55,7 @@ public class ConverterPanel : MonoBehaviour
 
     public void OnBackButtonClick()
     {
-        gameObject.SetActive(false);
+        base.Close();
     }
     
 }

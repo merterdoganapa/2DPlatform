@@ -19,14 +19,6 @@ public class GameController : MonoBehaviour
             return _instance;
         }
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            LoadNextLevel();
-        }
-    }
     
     public void LoadNextLevel()
     {
@@ -35,9 +27,20 @@ public class GameController : MonoBehaviour
         var sceneCountInBuildSettings = SceneManager.sceneCountInBuildSettings;
         if ((nextSceneIndex + 1) <= sceneCountInBuildSettings)
         {
-            SceneManager.LoadScene(nextSceneIndex);
+            PlayerPrefsController.TrySetValue("current_level",activeSceneIndex);
+            LoadLevelByBuildIndex(nextSceneIndex);
         }
-        
+    }
+
+    private void LoadLevelByBuildIndex(int index)
+    {
+        SceneManager.LoadScene(index);
+    }
+
+    public void RestartLevel()
+    {
+        int currentLevelIndex = PlayerPrefsController.TryGetValue<int>("current_level");
+        LoadLevelByBuildIndex(currentLevelIndex + 1);
     }
     
     public void ConvertStepsToCoin()
@@ -46,10 +49,10 @@ public class GameController : MonoBehaviour
         CoinController.Instance.IncreaseCoinAmount(stepAmount);
         StepController.Instance.DecreaseStepAmount(stepAmount);
     }
-    
-    public void OnPauseButtonClick()
-    {
-        SceneManager.LoadScene(0);
-    }
 
+    public void OnHomePageButtonClick()
+    {
+        LoadLevelByBuildIndex(0);
+    }
+    
 }

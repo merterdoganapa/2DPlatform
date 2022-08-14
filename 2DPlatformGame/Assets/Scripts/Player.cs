@@ -21,12 +21,14 @@ public class Player : MonoBehaviour
     {
         Health.Damaged += OnTakeDamage;
         Health.Healed += OnHealed;
+        Health.Killed += OnKill;
     }
 
     private void OnDisable()
     {
         Health.Damaged -= OnTakeDamage;
         Health.Healed -= OnHealed;
+        Health.Killed -= OnKill;
     }
 
     private void OnTakeDamage(int damage)
@@ -37,5 +39,10 @@ public class Player : MonoBehaviour
     private void OnHealed(int amount)
     {
         _healthSlider.value = Health.CurrentHealth;
+    }
+
+    private void OnKill()
+    {
+        GameOverPanel.Instance.Open();
     }
 }

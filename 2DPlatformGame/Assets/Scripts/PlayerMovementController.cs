@@ -161,7 +161,7 @@ namespace PlatformGame
 
         private void Die()
         {
-            gameObject.SetActive(false);
+            GetComponent<Health>().TakeDamage(int.MaxValue);
         }
 
         private void SlopeCheck()

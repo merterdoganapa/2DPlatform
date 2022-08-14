@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class RewardPanel : MonoBehaviour,IRewardAdListener
+public class RewardPanel : PanelController,IRewardAdListener
 {
     [SerializeField] private TextMeshProUGUI rewardText;
     [SerializeField] private TextMeshProUGUI rewardMultiplierText;
@@ -24,17 +24,12 @@ public class RewardPanel : MonoBehaviour,IRewardAdListener
 
     public void Open(string rewardAmount,int multiplier)
     {
-        gameObject.SetActive(true);
+        base.Open();
         rewardText.text = rewardAmount;
         this.multiplier = multiplier;
         rewardMultiplierText.text = $"x{multiplier} Claim";
     }
     
-    public void Close()
-    {
-        gameObject.SetActive(false);
-    }
-
     public void OnRewardButtonClick()
     {
         int rewardAmount = Convert.ToInt16(rewardText.text);
