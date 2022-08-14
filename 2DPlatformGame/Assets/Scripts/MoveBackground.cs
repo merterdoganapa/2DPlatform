@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Timers;
+using DG.Tweening;
 using UnityEngine;
 
 public class MoveBackground : MonoBehaviour
@@ -27,9 +28,9 @@ public class MoveBackground : MonoBehaviour
         
         for (int i = 0; i < layers.Length; i++)
         {
-            layers[i].transform.position += (targetPosition.x - prevPosition.x) * Vector3.right * (i + 1) * horizontalSpeed * Time.deltaTime;
+            layers[i].transform.position += (targetPosition.x - prevPosition.x) * Vector3.left * (i + 1) * horizontalSpeed * Time.deltaTime;
             layers[i].transform.position += (targetPosition.y - prevPosition.y) * Vector3.down * (i + 1) *
-                                            verticalSpeed * Time.deltaTime;
+                                           verticalSpeed * Time.deltaTime;
         }
         prevPosition = target.position;
     }

@@ -12,6 +12,7 @@ public class UI_Shop : MonoBehaviour
     [SerializeField] private TextMeshProUGUI name;
     [SerializeField] private TextMeshProUGUI price;
     [SerializeField] private TextMeshProUGUI description;
+    [SerializeField] private Button purchaseButton;
     
     public  ItemType itemType;
     
@@ -31,12 +32,30 @@ public class UI_Shop : MonoBehaviour
         this.itemType = itemType;
     }
 
-    public void OnPurchaseButtonClick()
+    public void CheckItem(int coinAmount)
     {
         var itemPrice = Convert.ToInt16(price.text);
-        //if (!CoinController.Instance.IsHaveEnoughCoin(itemPrice)) return;
-        //CoinController.Instance.DecreaseCoinAmount(itemPrice);
+        if (coinAmount >= itemPrice) // player can buy this item
+        {
+            purchaseButton.interactable = true;
+            price.color = Color.white;
+        }
+        else
+        {
+            purchaseButton.interactable = false;
+            price.color = Color.red;
+        }
+    } 
+
+    public void OnPurchaseButtonClick()
+    {
         Shop.Instance.OnItemPurchased(this);
+    }
+
+    public int GetPrice()
+    {
+        var itemPrice = Convert.ToInt16(price.text);
+        return itemPrice;
     }
     
 }

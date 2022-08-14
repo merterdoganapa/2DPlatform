@@ -12,7 +12,7 @@ namespace PlatformGame
     public class StepController : MonoBehaviour
     {
         private StepCounter _stepCounter;
-        [SerializeField] private StatUI _stepStatUI;
+        //[SerializeField] private StatUI _stepStatUI;
         [SerializeField] private int stepPeriod;
         [SerializeField] private int rewardAmount = 10;
         private int remainingStepAmount;
@@ -21,6 +21,8 @@ namespace PlatformGame
         private bool stepDetected = false;
         private static string playerPrefsStepString = "step_amount";
         private static StepController _instance;
+
+        public event Action<int> OnStepChanged = delegate { };
 
         public static StepController Instance
         {
@@ -36,8 +38,8 @@ namespace PlatformGame
         {
             PlayerPrefsController.TryGenerateKey(playerPrefsStepString, 0);
             Setup();
-            int stepAmount = GetStepAmount();
-            _stepStatUI.UpdateStat(stepAmount);
+            //int stepAmount = GetStepAmount();
+            //_stepStatUI.UpdateStat(stepAmount);
         }
 
         private void Setup()
@@ -75,9 +77,10 @@ namespace PlatformGame
                 
                 if (previousStepAmount != 0 && currentSteps > previousStepAmount)
                 {
-                    int delta = currentSteps - previousStepAmount;
+                    int delta = currentSteps - previousStepAmount; 
                     int currentStepAmount = IncreaseStepAmount(delta);
-                    _stepStatUI.UpdateStat(currentStepAmount);
+                    OnStepChanged?.Invoke(currentStepAmount);
+                    //_stepStatUI.UpdateStat(currentStepAmount);
                 }
             }
             #endif
@@ -89,13 +92,13 @@ namespace PlatformGame
         public int IncreaseStepAmount(int amount) 
         { 
             int newValue = PlayerPrefsController.IncreaseValue(playerPrefsStepString, amount);
-            _stepStatUI.UpdateStat(newValue);
+            OnStepChanged?.Invoke(newValue);
             return newValue;
         }
         public int DecreaseStepAmount(int amount) 
         { 
             int newValue = PlayerPrefsController.DecreaseValue(playerPrefsStepString, amount);
-            _stepStatUI.UpdateStat(newValue);
+            OnStepChanged?.Invoke(newValue);
             return newValue;
         }
         public bool IsHaveEnoughSteps(int desiredAmount)

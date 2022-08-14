@@ -1,4 +1,4 @@
-using System;
+    using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class CoinController : MonoBehaviour
 {
-    [SerializeField] private StatUI _coinStatUI;
     private static CoinController _instance;
     private static string playerPrefsCoinString = "coin_amount";
+    public event Action<int> OnCoinChanged = delegate {  };
 
     public static CoinController Instance
     {
@@ -21,14 +21,14 @@ public class CoinController : MonoBehaviour
 
     private void Awake()
     {
-        //DontDestroyOnLoad(this);
+        DontDestroyOnLoad(this);
         PlayerPrefsController.TryGenerateKey(playerPrefsCoinString, 0);
     }
 
-    private void Start()
+    public void Start()
     {
-        int coinAmount = GetCoinAmount();
-        _coinStatUI.UpdateStat(coinAmount);
+        var currentCoinAmount = GetCoinAmount();
+        OnCoinChanged?.Invoke(currentCoinAmount);
     }
 
     public static void ResetCoin() => PlayerPrefsController.TrySetValue(playerPrefsCoinString, 0);
@@ -38,14 +38,14 @@ public class CoinController : MonoBehaviour
     public int IncreaseCoinAmount(int amount)
     {
         int newValue = PlayerPrefsController.IncreaseValue(playerPrefsCoinString, amount);
-        _coinStatUI.UpdateStat(newValue);
+        OnCoinChanged?.Invoke(newValue);
         return newValue;
     }
 
     public int DecreaseCoinAmount(int amount)
     {
         int newValue = PlayerPrefsController.DecreaseValue(playerPrefsCoinString, amount);
-        _coinStatUI.UpdateStat(newValue);
+        OnCoinChanged?.Invoke(newValue);
         return newValue;
     }
 
