@@ -11,9 +11,6 @@ public abstract class BasePlayerPrefs
 
     public abstract void SetValue(string key, object value);
     public abstract object GetValue(string key);
-
-    public abstract void IncreaseValue(string key, object increaseAmount);
-    public abstract void DecreaseValue(string key, object decreaseAmount);
 }
 
 public interface IDigitalPlayerPrefs

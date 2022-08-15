@@ -11,13 +11,4 @@ public class PlayerPrefsString : BasePlayerPrefs
 
     public override object GetValue(string key) => PlayerPrefs.GetString(key);
 
-    public override void IncreaseValue(string key, object increaseAmount)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void DecreaseValue(string key, object decreaseAmount)
-    {
-        throw new NotImplementedException();
-    }
 }

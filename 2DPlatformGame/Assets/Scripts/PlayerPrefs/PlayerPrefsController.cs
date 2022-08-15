@@ -5,22 +5,24 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Object = System.Object;
 
 
 public static class PlayerPrefsController
 {
     private static List<Type> _types;
+    private static List<BasePlayerPrefs> _createdPrefs;
 
     static PlayerPrefsController()
     {
         _types = new List<Type>();
+        _createdPrefs = new List<BasePlayerPrefs>();
         var types = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes())
             .Where(p => typeof(BasePlayerPrefs).IsAssignableFrom(p));
         foreach (var type in types)
-            if (!type.IsAbstract)
+            if (!type.IsAbstract) { 
                 _types.Add(type);
+            }
     }
 
     public static void DeleteAll()
@@ -28,18 +30,47 @@ public static class PlayerPrefsController
         PlayerPrefs.DeleteAll();
     }
 
+    private static BasePlayerPrefs GetPlayerPrefsInstanceByType(Type type)
+    {
+        foreach (var createdInstance in _createdPrefs)
+        {
+            if (createdInstance.type == type)
+            {
+                return createdInstance;
+            }
+        }
+        return null;
+    }
+
     private static BasePlayerPrefs Get<T>()
     {
-        for (int i = 0; i < _types.Count; i++)
+        var basePlayerPrefs = GetPlayerPrefsInstanceByType(typeof(T));
+        if (basePlayerPrefs == null)
+        {
+            for (int i = 0; i < _types.Count; i++)
+            {
+                var type = _types[i];
+                basePlayerPrefs = (BasePlayerPrefs)Activator.CreateInstance(type);
+                if (basePlayerPrefs.type == typeof(T))
+                {
+                    _createdPrefs.Add(basePlayerPrefs);
+                    break;
+                }
+            }
+        }
+
+        return basePlayerPrefs;
+
+        /*for (int i = 0; i < _types.Count; i++)
         {
             var type = _types[i];
-            var basePlayerPrefs = (BasePlayerPrefs) Activator.CreateInstance(type);
+            var basePlayerPrefs = (BasePlayerPrefs)Activator.CreateInstance(type);
+            
             if (typeof(T) == basePlayerPrefs.type)
                 return basePlayerPrefs;
             GC.SuppressFinalize(basePlayerPrefs);
-        }
+        }*/
 
-        return null;
     }
 
     public static void TryGenerateKey<T>(string key, T defaultValue)
@@ -66,15 +97,14 @@ public static class PlayerPrefsController
         basePlayerPrefs?.SetValue(key, value);
     }
 
-    public static T IncreaseValue<T>(string key, T increseAmount)
+    public static T IncreaseValue<T>(string key, T increseAmount) where T : IComparable, IComparable<T>, IConvertible, IEquatable<T>, IFormattable
     {
         var basePlayerPrefs = Get<T>();
         if (basePlayerPrefs != null)
         {
-            basePlayerPrefs.IncreaseValue(key, increseAmount);
+            ((IDigitalPlayerPrefs)basePlayerPrefs).IncreaseValue(key, increseAmount);
             return TryGetValue<T>(key);
         }
-
         return default(T);
     }
 
@@ -83,7 +113,7 @@ public static class PlayerPrefsController
         var basePlayerPrefs = Get<T>();
         if (basePlayerPrefs != null)
         {
-            basePlayerPrefs.DecreaseValue(key, decreaseAmount);
+            ((IDigitalPlayerPrefs)basePlayerPrefs).DecreaseValue(key, decreaseAmount);
             return TryGetValue<T>(key);
         }
 
