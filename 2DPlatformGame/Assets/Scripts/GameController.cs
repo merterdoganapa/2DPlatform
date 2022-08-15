@@ -19,7 +19,12 @@ public class GameController : MonoBehaviour
             return _instance;
         }
     }
-    
+
+    private void Start()
+    {
+        MusicController.Instance.PlayInGameMusic();
+    }
+
     public void LoadNextLevel()
     {
         var activeSceneIndex = SceneManager.GetActiveScene().buildIndex;

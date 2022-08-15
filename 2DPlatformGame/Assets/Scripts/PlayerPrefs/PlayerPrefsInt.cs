@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerPrefsInt : BasePlayerPrefs
+public class PlayerPrefsInt : BasePlayerPrefs 
 {
     public PlayerPrefsInt() : base(typeof(int))
     {
